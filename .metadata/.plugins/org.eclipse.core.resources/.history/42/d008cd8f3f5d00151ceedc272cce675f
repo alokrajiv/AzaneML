@@ -1,0 +1,80 @@
+//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// Version : 0.1
+// Email : sanganinilay@hotmail.com,harootz@gmail.com
+// Twitter : @outlawzter,@harootz
+// Date : 17 Oct 2015
+//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Random;
+
+import weka.classifiers.Evaluation;
+import weka.classifiers.bayes.NaiveBayes;
+import weka.core.Instance;
+import weka.core.Instances;
+
+public class appsecml {
+
+	public static void main(String[] args) throws IOException {
+		
+		//Training
+		BufferedReader objBreader = null;
+		try{
+
+		objBreader = new BufferedReader(new FileReader("D:/MLNH/Trainingdata.arff"));
+		Instances objTrain = new Instances(objBreader);
+		objTrain.setClassIndex(objTrain.numAttributes()-1);
+		objBreader.close();
+		NaiveBayes objNB = new NaiveBayes();
+		try {
+			objNB.buildClassifier(objTrain); // trained
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		Evaluation objEval = new Evaluation(objTrain);
+		
+		objEval.crossValidateModel(objNB, objTrain, 2, new Random(1), args);
+		System.out.println(objNB.toString());
+		System.out.println(objEval.toSummaryString());
+		System.out.println(objEval.toClassDetailsString());
+		
+		//Test
+		BufferedReader objBreaderTest = null;
+		objBreaderTest =  new BufferedReader(new FileReader("D:/MLNH/testfile.arff"));
+		Instances objTest = new Instances(objBreaderTest);
+		
+		objTest.setClassIndex(objTrain.numAttributes()-1);
+		objBreaderTest.close();
+		
+		
+		//
+		double labelIndexZero = objNB.classifyInstance(objTest.instance(0));
+		objTest.instance(0).setClassValue(labelIndexZero);
+		//
+		double labelIndexOne = objNB.classifyInstance(objTest.instance(1));
+		objTest.instance(1).setClassValue(labelIndexOne);
+		//
+		double labelIndexTwo = objNB.classifyInstance(objTest.instance(1));
+		objTest.instance(1).setClassValue(labelIndexTwo);
+		
+		System.out.println("Predicted Value" + " " + objTest.instance(0).stringValue(7));
+		System.out.println("Predicted Value" + " " + objTest.instance(1).stringValue(7));
+		
+		
+		//evalTest.evaluateModel(objNB, objTest);
+		
+		//evalTest.evaluateModel(objNB,objTest);
+		//System.out.println(objTest.toSummaryString());
+		
+		}
+		catch(IOException e)
+		{
+			e.printStackTrace();
+		} 
+		catch (Exception e) {
+			e.printStackTrace();
+		}		
+	}
+
+}
